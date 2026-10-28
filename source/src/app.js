@@ -44,7 +44,7 @@ const DAYS = [
   ]},
   { n: "Day Two", date: "10 December", dow: "Thursday", city: "Bangalore", events: [
     { time: "8:45 AM",          title: "Muhurtham",                       line: "Sacred vows and traditional ceremonies until 11:00 AM", key: 1 },
-    { time: "12:00 PM",         title: "Reception & Lunch",               line: "Meet the bride and groom; lunch is served alongside", key: 1 }
+    { time: "11:00 AM",         title: "Reception & Lunch",               line: "Meet the bride and groom; lunch is served alongside", key: 1 }
   ]},
   { n: "Day Three", date: "15 December", dow: "Tuesday", city: "Lucknow", events: [
     { time: "6:00 PM onwards", title: "Reception", line: "Join us in Lucknow to celebrate with the couple", key: 1 }
