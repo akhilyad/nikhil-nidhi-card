@@ -361,7 +361,7 @@ const f = {
   name: $('#f-name'), phone: $('#f-phone'), guests: $('#f-guests'), gnames: $('#f-gnames'), msg: $('#f-msg'),
   yes: $('#yesOnly'), gwrap: $('#guestNamesWrap'), btn: $('#rsvpBtn'), err: $('#rsvpErr'), pnote: $('#phoneNote'),
   chips: document.querySelectorAll('.attend-chip'), trap: $('#f-site'),
-  gOut: $('#gOut'), gMinus: $('#gMinus'), gPlus: $('#gPlus'), sum: $('#rsvpSum'), nmsg: $('#nameMsg'), every: $('#evEvery')
+  gOut: $('#gOut'), gMinus: $('#gMinus'), gPlus: $('#gPlus'), nmsg: $('#nameMsg'), every: $('#evEvery')
 };
 const setOpen = (el, on) => { el.classList.toggle('open', on); el.inert = !on; };
 const nudge = el => { el.classList.remove('nudge'); void el.offsetWidth; el.classList.add('nudge'); };
@@ -374,11 +374,7 @@ function setGuests(n, quiet){
   if (!quiet){ f.gOut.classList.remove('bump'); void f.gOut.offsetWidth; f.gOut.classList.add('bump'); }
   updateSum();
 }
-function updateSum(){
-  if (!attending()){ f.sum.textContent = 'Regretfully declining. We will miss you.'; return; }
-  const n = guestsN(), e = evBoxes().filter(x => x.checked).length;
-  f.sum.textContent = `${n} ${n === 1 ? 'guest' : 'guests'} · ${e ? e + (e === 1 ? ' celebration' : ' celebrations') : 'no celebrations ticked yet'}`;
-}
+function updateSum(){}   /* the running summary line was removed on request; kept as a no-op for the callers */
 const evBoxes = () => [...document.querySelectorAll('#evGrid input[name=ev]')];
 const attending = () => document.querySelector('.attend-chip.on').dataset.v === 'Joyfully accepts';
 let editing = false;

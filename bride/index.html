@@ -501,7 +501,8 @@ html{scroll-padding-top:12px}
 .ev-opt .t small b{font-weight:500;color:var(--olive-deep);letter-spacing:.14em}
 .sum{margin-top:1.8rem;font-family:var(--sans);font-size:.8rem;letter-spacing:.06em;color:var(--olive-deep);min-height:1.4em;transition:opacity .3s}
 .sum:empty{visibility:hidden}
-.sum + .rsvp-submit{margin-top:.8rem}
+#rsvpBtn{margin-top:1.8rem}
+#mantra .mantra-mean.sa{letter-spacing:0;font-family:var(--deva);font-style:normal;font-size:clamp(1.02rem,4.5vw,1.55rem);line-height:2;color:var(--olive-deep);text-wrap:balance}
 .nudge{animation:nudge .5s ease}
 @keyframes nudge{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 .rsvp-done:not([hidden]),#rsvpFormBody:not([hidden]){animation:swapIn .7s cubic-bezier(.22,.61,.36,1) both}
@@ -764,9 +765,8 @@ html body .rsvp-submit{letter-spacing:.34em}
           <div class="ev-grid" id="evGrid"></div>
         </div></div>
         <div class="step"><i id="stepLast">3</i><span>A note for the couple <em>(optional)</em></span></div>
-        <textarea id="f-msg" rows="3" aria-label="A note for the couple" placeholder="Wishes, dietary needs, song requests…" maxlength="500"></textarea>
+        <textarea id="f-msg" rows="3" aria-label="A note for the couple" placeholder="Your wishes for the couple…" maxlength="500"></textarea>
         <input type="text" id="f-site" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="trap">
-        <p class="sum" id="rsvpSum" aria-live="polite"></p>
         <button type="submit" class="rsvp-submit" id="rsvpBtn">Send RSVP</button>
         <p class="rsvp-err" id="rsvpErr" role="alert" hidden></p>
         <p class="rsvp-note" id="rsvpNote">Your reply goes straight to the couple.</p>
@@ -788,7 +788,7 @@ html body .rsvp-submit{letter-spacing:.34em}
   <div class="lamp ml" aria-hidden="true"><div class="chain"></div><div class="body"><img src="../assets/lantern_sm.webp" alt=""></div></div>
   <div class="lamp mr" aria-hidden="true"><div class="chain"></div><div class="body"><img src="../assets/lantern_sm.webp" alt=""></div></div>
   <div class="mantra-inner">
-    <p class="mantra-mean">O Lord of the curved trunk and mighty form, whose radiance equals a million suns, remove all obstacles from our path, always.</p>
+    <p class="mantra-mean sa" lang="sa">वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।<br>निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥</p>
   </div>
 </section>
 
@@ -1164,7 +1164,7 @@ const f = {
   name: $('#f-name'), phone: $('#f-phone'), guests: $('#f-guests'), gnames: $('#f-gnames'), msg: $('#f-msg'),
   yes: $('#yesOnly'), gwrap: $('#guestNamesWrap'), btn: $('#rsvpBtn'), err: $('#rsvpErr'), pnote: $('#phoneNote'),
   chips: document.querySelectorAll('.attend-chip'), trap: $('#f-site'),
-  gOut: $('#gOut'), gMinus: $('#gMinus'), gPlus: $('#gPlus'), sum: $('#rsvpSum'), nmsg: $('#nameMsg'), every: $('#evEvery')
+  gOut: $('#gOut'), gMinus: $('#gMinus'), gPlus: $('#gPlus'), nmsg: $('#nameMsg'), every: $('#evEvery')
 };
 const setOpen = (el, on) => { el.classList.toggle('open', on); el.inert = !on; };
 const nudge = el => { el.classList.remove('nudge'); void el.offsetWidth; el.classList.add('nudge'); };
@@ -1177,11 +1177,7 @@ function setGuests(n, quiet){
   if (!quiet){ f.gOut.classList.remove('bump'); void f.gOut.offsetWidth; f.gOut.classList.add('bump'); }
   updateSum();
 }
-function updateSum(){
-  if (!attending()){ f.sum.textContent = 'Regretfully declining. We will miss you.'; return; }
-  const n = guestsN(), e = evBoxes().filter(x => x.checked).length;
-  f.sum.textContent = `${n} ${n === 1 ? 'guest' : 'guests'} · ${e ? e + (e === 1 ? ' celebration' : ' celebrations') : 'no celebrations ticked yet'}`;
-}
+function updateSum(){}   /* the running summary line was removed on request; kept as a no-op for the callers */
 const evBoxes = () => [...document.querySelectorAll('#evGrid input[name=ev]')];
 const attending = () => document.querySelector('.attend-chip.on').dataset.v === 'Joyfully accepts';
 let editing = false;
