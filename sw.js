@@ -1,7 +1,7 @@
 /* Offline support for the invitation. Pages: network first, saved copy when there is no signal.
    Pictures and fonts: saved copy first, refreshed in the background. RSVP submissions are never cached. */
-const VERSION = 'v2';
-const CORE = ['/groom/', '/bride/', '/qr.js',
+const VERSION = 'v3';
+const CORE = ['/groom/', '/bride/', '/muhurtam/', '/qr.js',
   '/assets/door-closed.webp', '/assets/door-open.webp', '/assets/floral-corner_sm.webp', '/assets/ganesha_sm.webp', '/assets/lantern_sm.webp'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
@@ -18,7 +18,7 @@ self.addEventListener('fetch', e => {
   if (!sameOrigin && !FONT_HOSTS.includes(url.hostname)) return;   /* maps, the RSVP script and everything else go straight to the network */
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); return res; })
-      .catch(() => caches.match(req, { ignoreSearch: true }).then(r => r || caches.match(url.pathname.startsWith('/bride') ? '/bride/' : '/groom/'))));
+      .catch(() => caches.match(req, { ignoreSearch: true }).then(r => r || caches.match(url.pathname.startsWith('/bride') ? '/bride/' : url.pathname.startsWith('/muhurtam') ? '/muhurtam/' : '/groom/'))));
     return;
   }
   const refresh = () => fetch(req).then(res => {

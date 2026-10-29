@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-side="bride">
+<html lang="en" data-side="bride" data-variant="">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -805,6 +805,8 @@ html body .rsvp-submit{letter-spacing:.34em}
 /* ═══════════════════════ EDIT ME ═══════════════════════ */
 /* Which page is this? Set per page by data-side on <html>: "groom" or "bride" */
 const SIDE = document.documentElement.dataset.side === 'bride' ? 'bride' : 'groom';
+/* data-variant="muhurtam": the 10 December Muhurtham only. No 9th, no 15th, no RSVP. */
+const MUHURTAM = document.documentElement.dataset.variant === 'muhurtam';
 
 const CONFIG = {
   /* Google Apps Script web-app URL (ends in /exec). RSVPs are saved to the Google Sheet through it. */
@@ -854,6 +856,12 @@ const DAYS = [
     { time: "6:00 PM onwards", title: "Reception", line: "Join us in Lucknow to celebrate with the couple", key: 1 }
   ]}
 ];
+if (MUHURTAM){
+  DAYS.splice(2, 1); DAYS.splice(0, 1);   /* keep Day Two only */
+  DAYS[0].n = 'Wedding Day';
+  CONFIG.venues = CONFIG.venues.filter(v => v.city === 'Bangalore');
+  Object.assign(CONFIG.venues[0], { dates: '10 December 2026', for: 'The Muhurtham', slots: [ { d: 0, start: '2026-12-10T08:00', end: '2026-12-10T14:00' } ] });
+}
 /* ═══════════════════════════════════════════════════════ */
 
 const $ = s => document.querySelector(s);
@@ -1096,19 +1104,19 @@ document.querySelectorAll('.reveal, .rise, .words, .band').forEach(el => io.obse
 /* ── 4b. Dock (jump links) + reading progress ── */
 const dock = $('#dock'), progBar = $('#progBar'), dockLinks = [...dock.querySelectorAll('a')];
 let dockReady = false, kbOpen = false, dockSeen = false, dockHold = false, lastY = 0, holdT = 0;
-const dockIds = ['flow', 'venue', 'rsvp'].map(id => $('#' + id));
+const dockIds = ['flow', 'venue', 'rsvp'].map(id => $('#' + id)).filter(Boolean);
 function updateDock(){
   const max = document.documentElement.scrollHeight - innerHeight;
   progBar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
   if (!dockReady) return;
-  const rs = $('#rsvp').getBoundingClientRect();
-  const inRsvp = rs.top < innerHeight * .5 && rs.bottom > innerHeight * .25;
+  const rsEl = $('#rsvp'), rs = rsEl && rsEl.getBoundingClientRect();
+  const inRsvp = !!rs && rs.top < innerHeight * .5 && rs.bottom > innerHeight * .25;
   const dy = scrollY - lastY; lastY = scrollY;
   if (dy > 8){ dockHold = true; clearTimeout(holdT); holdT = setTimeout(() => { dockHold = false; updateDock(); }, 800); }
   else if (dy < -8){ dockHold = false; }
   const show = scrollY > innerHeight * .5 && !inRsvp && !kbOpen && !dockHold;
   dock.classList.toggle('show', show);
-  if (show && !dockSeen){ dockSeen = true; dock.querySelector('.go').classList.add('pulse'); }
+  if (show && !dockSeen){ dockSeen = true; const go = dock.querySelector('.go'); if (go) go.classList.add('pulse'); }
   let cur = '';
   dockIds.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * .45) cur = s.id; });
   dockLinks.forEach(a => a.classList.toggle('on', a.dataset.s === cur && !a.classList.contains('go')));
@@ -1133,6 +1141,7 @@ window.addEventListener('load', buildRiver);
 document.fonts && document.fonts.ready.then(buildRiver);
 buildRiver();
 
+if (!MUHURTAM){
 /* ═══════════ 6. RSVP: one entry per phone number ═══════════ */
 const LS_KEY = 'wedding-rsvp-v1';
 const lsGet = () => { try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch(e){ return null; } };
@@ -1355,6 +1364,8 @@ f.form.reset(); setGuests(1, true); f.name.value = ''; f.phone.value = '';
   $('#seeReply').addEventListener('click', () => { b.remove(); showDone(saved); });
 })();
 
+}   /* end RSVP (skipped on the Muhurtham page) */
+
 /* scroll cue: shown after the door opens, gone as soon as the guest scrolls */
 (function(){
   const hide = () => { if (scrollY > 40) document.body.classList.remove('cue-on'), removeEventListener('scroll', hide); };
@@ -1364,6 +1375,7 @@ f.form.reset(); setGuests(1, true); f.name.value = ''; f.phone.value = '';
 
 /* optional RSVP deadline and contact line: shown only once filled in CONFIG */
 (function(){
+  if (MUHURTAM) return;
   if (CONFIG.rsvpBy){ const l = document.querySelector('.form-lead'); if (l) l.textContent = 'Kindly reply by ' + CONFIG.rsvpBy + '. It takes under a minute.'; }
   const c = CONFIG.contact || {};
   if (c.phone){
